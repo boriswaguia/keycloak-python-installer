@@ -3,14 +3,32 @@ keycloak-python-installer
 =========================
 
 
-Add a short description here!
+A keycloak installer written in python.
 
 
 Description
 ===========
 
-A longer description of your project goes here...
+This software allow it users to :
+* Download a given version of keycloak.
 
+
+Running:
+========
+
+* Make sure all dependency are installed
+    - pip3 install wget
+    - pip3 install semver
+    - /Applications/Python\ 3.7/Install\ Certificates.command
+
+* Build binary distribution
+    - python3 build bdist
+
+* Run the script with some parameters to download a specific keycloak version
+    - $python3 build/lib/keycloak_python_installer/skeleton.py 5.0.0 zip
+
+* Additionals informations
+    - The script only accept zip|tar.gz
 
 Note
 ====

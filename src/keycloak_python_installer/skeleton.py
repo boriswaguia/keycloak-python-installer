@@ -1,116 +1,32 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-This is a skeleton file that can serve as a starting point for a Python
-console script. To run this script uncomment the following lines in the
-[options.entry_points] section in setup.cfg:
-
-    console_scripts =
-         fibonacci = keycloak_python_installer.skeleton:run
-
-Then run `python setup.py install` which will install the command `fibonacci`
-inside your current environment.
-Besides console scripts, the header (i.e. until _logger...) of this file can
-also be used as template for Python modules.
-
-Note: This skeleton file can be safely removed if not needed!
-"""
-
-import argparse
+import wget
 import sys
-import logging
+from semver import parse
 
-from keycloak_python_installer import __version__
-
-__author__ = "Boris Waguia"
-__copyright__ = "Boris Waguia"
-__license__ = "mit"
-
-_logger = logging.getLogger(__name__)
+keycloak_url = "https://downloads.jboss.org/keycloak/{0}/keycloak-{1}.{2}"
 
 
-def fib(n):
-    """Fibonacci example function
+def __validate__(keycloak_version, keycloak_format):
+    if keycloak_version is None:
+        raise ValueError('keycloak_version is required')
+    if keycloak_format is None:
+        raise ValueError('keycloak_format is required')
+    if str(keycloak_format) != 'zip' and str(keycloak_format) != 'tar.gz':
+        raise ValueError('keycloak_format is invalid valid. Should be one of .zip or .tar.gz')
+    
+    parse(keycloak_version)#validate version is formatted as semver.
 
-    Args:
-      n (int): integer
+def build_download_url(keycloak_version, keycloak_format):
+    __validate__(keycloak_version, keycloak_format)
+    formated_url = str(keycloak_url).format(keycloak_version, keycloak_version, keycloak_format)
+    return formated_url
 
-    Returns:
-      int: n-th Fibonacci number
-    """
-    assert n > 0
-    a, b = 1, 1
-    for i in range(n-1):
-        a, b = b, a+b
-    return a
-
-
-def parse_args(args):
-    """Parse command line parameters
-
-    Args:
-      args ([str]): command line parameters as list of strings
-
-    Returns:
-      :obj:`argparse.Namespace`: command line parameters namespace
-    """
-    parser = argparse.ArgumentParser(
-        description="Just a Fibonnaci demonstration")
-    parser.add_argument(
-        '--version',
-        action='version',
-        version='keycloak-python-installer {ver}'.format(ver=__version__))
-    parser.add_argument(
-        dest="n",
-        help="n-th Fibonacci number",
-        type=int,
-        metavar="INT")
-    parser.add_argument(
-        '-v',
-        '--verbose',
-        dest="loglevel",
-        help="set loglevel to INFO",
-        action='store_const',
-        const=logging.INFO)
-    parser.add_argument(
-        '-vv',
-        '--very-verbose',
-        dest="loglevel",
-        help="set loglevel to DEBUG",
-        action='store_const',
-        const=logging.DEBUG)
-    return parser.parse_args(args)
-
-
-def setup_logging(loglevel):
-    """Setup basic logging
-
-    Args:
-      loglevel (int): minimum loglevel for emitting messages
-    """
-    logformat = "[%(asctime)s] %(levelname)s:%(name)s:%(message)s"
-    logging.basicConfig(level=loglevel, stream=sys.stdout,
-                        format=logformat, datefmt="%Y-%m-%d %H:%M:%S")
-
-
-def main(args):
-    """Main entry point allowing external calls
-
-    Args:
-      args ([str]): command line parameter list
-    """
-    args = parse_args(args)
-    setup_logging(args.loglevel)
-    _logger.debug("Starting crazy calculations...")
-    print("The {}-th Fibonacci number is {}".format(args.n, fib(args.n)))
-    _logger.info("Script ends here")
-
+def download(version=None, format_='zip'):
+    formatted_url = build_download_url(version, format_)
+    filename = wget.download(formatted_url)
+    print('File downloaded at %s'%filename)
+    return True
 
 def run():
-    """Entry point for console_scripts
-    """
-    main(sys.argv[1:])
-
-
+    download(sys.argv[1],sys.argv[2])
 if __name__ == "__main__":
     run()
