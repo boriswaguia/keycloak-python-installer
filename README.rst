@@ -16,7 +16,7 @@ This software allow it users to :
 Running:
 ========
 
-* Make sure all dependency are installed
+* Make sure all dependencies are installed
     - pip3 install wget
     - pip3 install semver
     - /Applications/Python\ 3.7/Install\ Certificates.command
